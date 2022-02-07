@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ public class FundamentosApplication implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		//clasesAnteriores();
 		saveUsersInDataBase();
+		getInformationJpqlFromUser();
 	}
 
 	private void saveUsersInDataBase() {
@@ -64,6 +66,8 @@ public class FundamentosApplication implements CommandLineRunner{
 		User user3 = new User("Amelia", "amelia@algo.com", LocalDate.of(2021, 03, 31));
 		User user4 = new User("Subaru", "subaru@algo.com", LocalDate.of(2021, 04, 12));
 		User user5 = new User("Coco", "coco@algo.com", LocalDate.of(2021, 02, 11));
+		User user6 = new User("Cocokaine", "cocokaine@algo.com", LocalDate.of(2021, 02, 11));
+		User user7 = new User("Cocolate", "cocolate@algo.com", LocalDate.of(2021, 02, 11));
 		List<User> list = Arrays.asList(user1, user2, user3, user4, user5);
 		list.stream().forEach(userRepository::save);
 		//userRepository.saveAll(listUsers);
@@ -81,5 +85,14 @@ public class FundamentosApplication implements CommandLineRunner{
 		}catch(Exception e){
 			LOGGER.error("Error matemático " + e.getMessage());
 		}
+	}
+
+	private void getInformationJpqlFromUser() {
+		LOGGER.info("Usuario con el método findbyUserEmail: " + userRepository.findByUserEmail("esteban@algo.com").orElseThrow(()-> new RuntimeException("Usuario no encontrado")));
+
+		Sort sort;
+		userRepository.findAndSort("Co", Sort.by("id").descending())
+				.stream()
+				.forEach(user -> LOGGER.info("Usuarios con metodo sort " + user));
 	}
 }
